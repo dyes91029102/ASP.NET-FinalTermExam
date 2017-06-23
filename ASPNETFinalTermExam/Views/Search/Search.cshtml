@@ -1,1 +1,161 @@
-﻿
+﻿@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script>
+        $(document).ready(function () {
+            $("#search").click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SearchAction", "Search")',
+                    data: {
+                        CustomerID: $("#CustomerID").val(),
+                        CustomerName: $("#CustomerName").val(),
+                        ContactName: $("#ContactName").val(),
+                        ContactTitle: $("#ContactTitle").val(),
+                    },
+                    success: function (data) {
+                        addRow(data);
+
+                    }
+
+                });
+            });
+
+            
+            $("#clear").click(function () {
+                $("#CustomerID").val('')
+                $("#CustomerName").val('')
+                $("#ContactName").val('')
+                $("#ContactTitle").val('')
+            })
+            function addRow(data) {
+
+                var table = document.getElementById("result");
+                var tbody = document.getElementById("tbody");
+                $("#tbody").empty();
+                for (var i = 0; i < data.length; i++) {
+                    var tr = document.createElement("tr");
+                    tr.setAttribute("id", "tr" + data[i].CustomerID)
+                    var CustomerID = document.createElement("td");
+                    CustomerID.innerHTML = data[i].CustomerID;
+
+                    var CustomerName = document.createElement("td");
+                    CustomerName.innerHTML = data[i].CustomerName;
+
+
+                    var ContactName = document.createElement("td");
+                    ContactName.innerHTML = data[i].ContactName;
+
+
+                    var ContactTitle = document.createElement("td");
+                    ContactTitle.innerHTML = data[i].ContactTitle;
+
+                    tr.appendChild(CustomerID);
+                    tr.appendChild(CustomerName)
+                    tr.appendChild(ContactName)
+                    tr.appendChild(ContactTitle)
+
+                    var td = document.createElement("td");
+                    var update = document.createElement("input");
+                    update.setAttribute("class", "btn btn-primary")
+                    update.setAttribute("type", "button")
+                    update.setAttribute("id", "update" + data[i].CustomerID);
+                    update.setAttribute("onclick", "");
+                    update.setAttribute("value", "修改")
+                    td.appendChild(update)
+                    tr.appendChild(td);
+
+                    var td = document.createElement("td");
+                    var remove = document.createElement("input");
+                    remove.setAttribute("class", "btn btn-primary")
+                    remove.setAttribute("type", "button")
+                    remove.setAttribute("id", "remove" + data[i].CustomerID);
+                    remove.setAttribute("onclick", "deleteRow(" + data[i].CustomerID + ")");
+                    remove.setAttribute("value", "刪除");
+                    td.appendChild(remove)
+                    tr.appendChild(td);
+
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+            };
+
+
+        })
+
+        function deleteRow(CustomerID) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Delete", "Delete")',
+                data: {
+                    CustomerID: CustomerID
+                },
+                success: function (data) {
+                    alert("刪除成功")
+                    $("#tr" + CustomerID).empty()
+                },
+                error: function (res) {
+
+                    alert("刪除成功")
+                    $("#tr" + CustomerID).empty()
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+       客戶資料查詢
+        <table class="table table-bordered">
+            <tr>
+                <td>客戶編號</td>
+                <td colspan="2"><input  type="text" id="CustomerID"/></td>               
+            </tr>
+            <tr>
+                <td>客戶名稱</td>
+                <td colspan="2"><input type="text" id="CustomerName" /></td>
+            </tr>
+            <tr>
+                <td>連絡人姓名</td>
+                <td colspan="2"><input type="text" id="ContactName" /></td>
+            </tr>
+            <tr>
+                <td>連絡人職稱</td>
+                <td colspan="2"><input type="text" id="ContactTitle" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary" id="search">查詢</button>
+                    <button class="btn btn-primary" id="clear">清除</button>
+                    <a href="../Insert/Index"><button class="btn btn-primary" id="insert">新增客戶</button></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div>
+        查詢結果
+        <table class="table table-bordered" id="result">
+            <tr>
+                <td>編號</td>
+                <td>名稱</td>
+                <td>連絡人姓名</td>
+                <td>連絡人職稱</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
