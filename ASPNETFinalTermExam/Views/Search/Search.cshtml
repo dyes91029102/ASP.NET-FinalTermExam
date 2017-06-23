@@ -91,6 +91,7 @@
         })
 
         function deleteRow(CustomerID) {
+            //這邊有點奇怪表單有刪掉，但會出現伺服器錯誤
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("Delete", "Delete")',
